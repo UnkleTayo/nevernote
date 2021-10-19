@@ -6,7 +6,7 @@ import cors from 'cors'
 import { CONST } from './constants/string'
 import { ApolloServer, gql } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
-import { UserResolver } from "./graphql/UserResolver";
+import { MyContext, UserResolver } from "./graphql/UserResolver";
 
 createConnection().then(async connection => {
     const app = express()
@@ -22,7 +22,8 @@ createConnection().then(async connection => {
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
             resolvers: [UserResolver]
-        })
+        }),
+        context: ({ req, res }): MyContext => ({ req, res })
     })
     await apolloServer.start();
     apolloServer.applyMiddleware({ app })
