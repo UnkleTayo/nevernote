@@ -3,6 +3,7 @@ import { Arg, Ctx, Field, Mutation, ObjectType, Query, Resolver } from "type-gra
 import { generateAccessToken, generateRefreshToken } from "../helpers/generateToken";
 import { User } from "../entity/User";
 import { Request, Response } from "express";
+import { CONST } from "../constants/string";
 
 export interface MyContext {
   res: Response;
@@ -57,6 +58,9 @@ export class UserResolver {
       const accessToken = generateAccessToken(user);
       const refreshToken = generateRefreshToken(user);
 
+      res.cookie(CONST.JWT_COOKIE, refreshToken, {
+        httpOnly: true,
+      });
       // sendRefreshToken(res, refreshToken);
 
       return {

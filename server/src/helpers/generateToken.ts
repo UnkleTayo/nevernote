@@ -21,3 +21,9 @@ export const generateRefreshToken = (user: User) => {
     }
   );
 };
+
+// export const sendRefreshToken = (res: Response, refreshToken: string) => {
+//   res.cookie(CONST.JWT_COOKIE, refreshToken, {
+//     httpOnly: true,
+//   });
+// };
