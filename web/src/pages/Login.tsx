@@ -3,14 +3,18 @@ import { ChangeEvent, FormEvent, useState } from 'react'
 import { GENERICS } from '../component/GlobalStyle'
 import { Wrapper } from '../component/wrapper'
 import { useLoginMutation } from '../generated/graphql'
+import Illustration from '../assets/images/illustartion.jpg'
+import Logo from '../assets/images/never.png'
+import { RouterProps } from 'react-router'
+import { Link } from 'react-router-dom'
 
-export const Login = () => {
+export const Login = ({ history }: RouterProps) => {
   const [form, setForm] = useState({
     email: '',
     password: '',
   })
 
-  const [submitLogin, { error }] = useLoginMutation()
+  const [submitLogin, { error, loading }] = useLoginMutation()
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -21,6 +25,7 @@ export const Login = () => {
         },
       })
       console.log('FORM', form)
+      history.push('/')
     } catch (error) {
       console.error(error)
     }
@@ -32,17 +37,11 @@ export const Login = () => {
     <Wrapper center={true}>
       <FormWrapper className="login-container">
         <div className="left-side">
-          <img
-            src="https://businesstemplates.co.nz/wp-content/uploads/2020/12/login-concept-illustration_114360-739.jpg"
-            alt="login"
-          />
+          <img src={Illustration} alt="login" />
         </div>
         <div className="right-side">
           <div>
-            <img
-              src="https://www.freeiconspng.com/uploads/evernote-icon-2.png"
-              alt=""
-            />
+            <img src={Logo} alt="Logo" />
             <h2>Nevernote</h2>
           </div>
           <form onSubmit={handleSubmit}>
@@ -70,11 +69,24 @@ export const Login = () => {
               />
             </div>
 
-            {error && <div>{JSON.stringify(error)}</div>}
+            {error &&
+              error.graphQLErrors.map(({ message }, i) => (
+                <div key={i}>
+                  <small className="error-message">{message}</small>
+                </div>
+              ))}
 
             <div>
-              <button type="submit">Submit</button>
+              <button disabled={loading} type="submit">
+                {loading ? '...' : 'Submit'}
+              </button>
             </div>
+            <p>
+              Don't have an account? Signup&nbsp;
+              <span>
+                <Link to="/signup">here</Link>
+              </span>
+            </p>
           </form>
         </div>
       </FormWrapper>
