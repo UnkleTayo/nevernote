@@ -1,15 +1,19 @@
 import { compare, hash } from "bcryptjs";
-import { Arg, Ctx, Field, Mutation, ObjectType, Query, Resolver } from "type-graphql";
-import { generateAccessToken, generateRefreshToken } from "../helpers/generateToken";
+import { Arg, Ctx, Field, Mutation, ObjectType, Query, Resolver, UseMiddleware } from "type-graphql";
+import { generateAccessToken, generateRefreshToken, sendRefreshToken } from "../helpers/generateToken";
 import { User } from "../entity/User";
 import { Request, Response } from "express";
 import { CONST } from "../constants/string";
-
+import { getConnection } from "typeorm";
+import { isAuth } from "../helpers/isAuth";
 export interface MyContext {
   res: Response;
-  req: Request
+  req: Request;
+  tokenPayload?: {
+    userId: string;
+    tokenVersion?: number;
+  };
 }
-
 
 @ObjectType()
 class LoginResponse {
@@ -23,6 +27,20 @@ export class UserResolver {
   @Query(() => String)
   hello() {
     return `Hello world`
+  }
+
+  @Query(() => User, { nullable: true })
+  @UseMiddleware(isAuth)
+  async me(@Ctx() ctx: MyContext) {
+    const payload = ctx.tokenPayload;
+    if (!payload) return null;
+    try {
+      const user = await User.findOne(payload.userId);
+      return user;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
   }
 
   @Mutation(() => Boolean)
@@ -58,10 +76,7 @@ export class UserResolver {
       const accessToken = generateAccessToken(user);
       const refreshToken = generateRefreshToken(user);
 
-      res.cookie(CONST.JWT_COOKIE, refreshToken, {
-        httpOnly: true,
-      });
-      // sendRefreshToken(res, refreshToken);
+      sendRefreshToken(res, refreshToken)
 
       return {
         access_token: accessToken,
@@ -71,4 +86,10 @@ export class UserResolver {
     }
   }
 
+
+  @Mutation()
+  async revokeUserSession(@Arg("userId") userId: string) {
+    await getConnection().getRepository(User).increment({ id: userId }, "token_version", 1)
+    return true
+  }
 }
