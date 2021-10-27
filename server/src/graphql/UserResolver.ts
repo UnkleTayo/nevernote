@@ -87,9 +87,12 @@ export class UserResolver {
   }
 
 
-  @Mutation()
+  @Mutation(() => Boolean)
   async revokeUserSession(@Arg("userId") userId: string) {
-    await getConnection().getRepository(User).increment({ id: userId }, "token_version", 1)
-    return true
+    await getConnection()
+      .getRepository(User)
+      .increment({ id: userId! }, "token_version", 1);
+    return true;
   }
+
 }

@@ -6,7 +6,7 @@ import {
     BaseEntity,
     OneToMany,
 } from "typeorm";
-// import { Note } from "./Note";
+import { Note } from "./Note";
 
 @ObjectType()
 @Entity()
@@ -29,4 +29,5 @@ export class User extends BaseEntity {
     @Field(() => Int)
     @Column("int", { default: 0 })
     token_version: number;
+
 }
