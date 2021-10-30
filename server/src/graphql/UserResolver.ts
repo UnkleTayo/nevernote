@@ -95,4 +95,9 @@ export class UserResolver {
     return true;
   }
 
+  @Mutation(() => Boolean)
+  async logout(@Ctx() ctx: MyContext) {
+    ctx.res.clearCookie(CONST.JWT_COOKIE);
+    return true;
+  }
 }
