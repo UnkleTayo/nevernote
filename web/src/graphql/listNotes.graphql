@@ -1,5 +1,5 @@
-query ListNotes($search: String, $orderBy: String) {
-  listNotes(search: $search, orderBy: $orderBy) {
+query ListNotes {
+  listNotes {
     id
     content
     title

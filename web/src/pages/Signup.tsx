@@ -19,7 +19,7 @@ export const SignUp = ({ history }: RouterProps) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      submitSignup({
+      await submitSignup({
         variables: {
           ...form,
         },

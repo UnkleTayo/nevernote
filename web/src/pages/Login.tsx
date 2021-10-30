@@ -7,6 +7,7 @@ import Illustration from '../assets/images/illustartion.jpg'
 import Logo from '../assets/images/never.png'
 import { RouterProps } from 'react-router'
 import { Link } from 'react-router-dom'
+import { saveToken } from '../helper/auth'
 
 export const Login = ({ history }: RouterProps) => {
   const [form, setForm] = useState({
@@ -19,12 +20,12 @@ export const Login = ({ history }: RouterProps) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      submitLogin({
+      const data = await submitLogin({
         variables: {
           ...form,
         },
       })
-      console.log('FORM', form)
+      saveToken(data.data?.login.access_token!)
       history.push('/')
     } catch (error) {
       console.error(error)

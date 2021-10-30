@@ -1,11 +1,37 @@
 import styled from '@emotion/styled'
+import { FaBook, FaPlus, FaSearch, FaSignOutAlt } from 'react-icons/fa'
 import { GENERICS, MIXINS } from './GlobalStyle'
 
-const Navigation = () => {
-  return <NavigationStyled></NavigationStyled>
+export const Navigation = () => {
+  return (
+    <NavigationStyled>
+      <div className="user-profile">
+        <div></div>
+        <span>John Doe</span>
+        <span>
+          <FaSignOutAlt />
+        </span>
+      </div>
+      <div className="search-container">
+        <FaSearch />
+        <input className="search-box" type="text" placeholder="search" />
+      </div>
+
+      <div className="newnote-button">
+        <FaPlus />
+        <span>New Note</span>
+      </div>
+
+      <ul className="navs-menu">
+        <li>
+          <FaBook />
+          <span>All Notes</span>
+        </li>
+      </ul>
+    </NavigationStyled>
+  )
 }
 
-export default Navigation
 const NavigationStyled = styled.div`
   width: 100%;
   height: 100%;
@@ -46,13 +72,13 @@ const NavigationStyled = styled.div`
 
   .search-container {
     ${MIXINS.va()}
-    padding: 10px 20px;
+    padding: 10px;
     border-radius: 30px;
     background-color: ${GENERICS.colorBlackCalm};
     margin: 0 20px;
     margin-bottom: 14px;
 
-    > input {
+    .search-box {
       background-color: transparent;
       color: #ccc;
       border: none;
