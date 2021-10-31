@@ -29,5 +29,4 @@ export class User extends BaseEntity {
     @Field(() => Int)
     @Column("int", { default: 0 })
     token_version: number;
-
 }

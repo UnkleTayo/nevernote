@@ -3,7 +3,7 @@ import { ListNotes } from '../component/ListNotes'
 import { Navigation } from '../component/Navigation'
 import { Wrapper } from '../component/wrapper'
 
-export const Home = () => {
+export const Home: React.FC = () => {
   return (
     <HomeStyled>
       <Navigation />

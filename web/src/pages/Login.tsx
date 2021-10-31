@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { ChangeEvent, FormEvent, useState } from 'react'
+import React, { ChangeEvent, FormEvent, useState } from 'react'
 import { GENERICS } from '../component/GlobalStyle'
 import { Wrapper } from '../component/wrapper'
 import { useLoginMutation } from '../generated/graphql'

@@ -1,3 +1,0 @@
-query DeleteNote($noteId: String!) {
-  deleteNote(noteId: $noteId)
-}

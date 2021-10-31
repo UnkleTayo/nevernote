@@ -3,7 +3,7 @@ import { createConnection } from "typeorm";
 import express, { Request, Response } from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
-import cookieParser from 'cookie-parser'
+// import cookieParser from 'cookie-parser'
 import { CONST } from './constants/string'
 import { ApolloServer, gql } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
@@ -11,6 +11,7 @@ import { MyContext, UserResolver } from "./graphql/UserResolver";
 import { verify } from "jsonwebtoken";
 import { User } from "./entity/User";
 import { generateAccessToken, generateRefreshToken, sendRefreshToken } from "./helpers/generateToken";
+import { NoteResolver } from "./graphql/NoteResolver";
 
 createConnection().then(async connection => {
     const app = express()
@@ -20,8 +21,8 @@ createConnection().then(async connection => {
             // origin: "*",
             credentials: true
         })
-    );
-    app.use(cookieParser())
+    ); 2
+    // app.use(cookieParser())
     app.use(morgan("dev"))
 
 
@@ -57,10 +58,11 @@ createConnection().then(async connection => {
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [UserResolver]
+            resolvers: [UserResolver, NoteResolver]
         }),
         context: ({ req, res }): MyContext => ({ req, res })
     })
+
     await apolloServer.start();
     apolloServer.applyMiddleware({ app, cors: false })
 

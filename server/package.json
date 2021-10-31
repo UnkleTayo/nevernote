@@ -28,6 +28,8 @@
    },
    "scripts": {
       "start": "nodemon --exec ts-node src/index.ts",
-      "start:db": "docker-compose up"
+      "start:db": "docker-compose up",
+      "parser": "yarn add cookie-parser",
+      "parserT":"yarn add -D @types/cookie-parser"
    }
 }

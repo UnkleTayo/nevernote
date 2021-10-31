@@ -3,6 +3,7 @@ import { FaBook, FaPlus, FaSearch, FaSignOutAlt } from 'react-icons/fa'
 import { GENERICS, MIXINS } from './GlobalStyle'
 
 export const Navigation = () => {
+  // const [submitLogout, { client }] = useLogoutMutation()
   return (
     <NavigationStyled>
       <div className="user-profile">
