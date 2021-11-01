@@ -1,11 +1,26 @@
 import { compare, hash } from "bcryptjs";
-import { Arg, Ctx, Field, Mutation, ObjectType, Query, Resolver, UseMiddleware } from "type-graphql";
-import { generateAccessToken, generateRefreshToken, sendRefreshToken } from "../helpers/generateToken";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  sendRefreshToken,
+} from "../helpers/generateToken";
+import {
+  Arg,
+  Ctx,
+  Field,
+  Mutation,
+  ObjectType,
+  Query,
+  Resolver,
+  UseMiddleware,
+} from "type-graphql";
 import { User } from "../entity/User";
-import { Request, Response } from "express";
-import { CONST } from "../constants/string";
+import { Response, Request } from "express";
 import { getConnection } from "typeorm";
+import { verify } from "jsonwebtoken";
 import { isAuth } from "../helpers/isAuth";
+import { CONST } from "../constants/string";
+
 export interface MyContext {
   res: Response;
   req: Request;
@@ -21,12 +36,11 @@ class LoginResponse {
   access_token: string;
 }
 
-
 @Resolver()
 export class UserResolver {
   @Query(() => String)
   hello() {
-    return `Hello world`
+    return "Hello WORLD";
   }
 
   @Query(() => User, { nullable: true })
@@ -37,7 +51,7 @@ export class UserResolver {
     try {
       const user = await User.findOne(payload.userId);
       return user;
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       return null;
     }
@@ -76,7 +90,7 @@ export class UserResolver {
       const accessToken = generateAccessToken(user);
       const refreshToken = generateRefreshToken(user);
 
-      sendRefreshToken(res, refreshToken)
+      sendRefreshToken(res, refreshToken);
 
       return {
         access_token: accessToken,
@@ -85,7 +99,6 @@ export class UserResolver {
       throw new Error(error);
     }
   }
-
 
   @Mutation(() => Boolean)
   async revokeUserSession(@Arg("userId") userId: string) {

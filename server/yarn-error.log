@@ -1,8 +1,8 @@
 Arguments: 
-  /home/adetayo/.nvm/versions/node/v14.16.0/bin/node /usr/share/yarn/bin/yarn.js add -D @types/ bcryptjs
+  /home/adetayo/.nvm/versions/node/v14.16.0/bin/node /usr/share/yarn/bin/yarn.js add parser
 
 PATH: 
-  /opt/firefox/firefox:/opt/firefox/firefox:/home/adetayo/.nvm/versions/node/v14.16.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/local/go/bin:/usr/local/go/bin
+  /opt/firefox/firefox:/home/adetayo/.nvm/versions/node/v14.16.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/local/go/bin
 
 Yarn version: 
   1.22.15
@@ -14,17 +14,8 @@ Platform:
   linux x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/@types%2f: Request "https://registry.yarnpkg.com/@types%2f" returned a 405
-      at Request.params.callback [as _callback] (/usr/share/yarn/lib/cli.js:67040:18)
-      at Request.self.callback (/usr/share/yarn/lib/cli.js:140885:22)
-      at Request.emit (events.js:315:20)
-      at Request.<anonymous> (/usr/share/yarn/lib/cli.js:141857:10)
-      at Request.emit (events.js:315:20)
-      at IncomingMessage.<anonymous> (/usr/share/yarn/lib/cli.js:141779:12)
-      at Object.onceWrapper (events.js:421:28)
-      at IncomingMessage.emit (events.js:327:22)
-      at endReadableNT (internal/streams/readable.js:1327:12)
-      at processTicksAndRejections (internal/process/task_queues.js:80:21)
+  Error: getaddrinfo EAI_AGAIN registry.yarnpkg.com
+      at GetAddrInfoReqWrap.onlookup [as oncomplete] (dns.js:67:26)
 
 npm manifest: 
   {
@@ -32,6 +23,7 @@ npm manifest:
      "version": "0.0.1",
      "description": "Awesome project developed with TypeORM.",
      "devDependencies": {
+        "@types/bcryptjs": "^2.4.2",
         "@types/jsonwebtoken": "^8.5.5",
         "@types/morgan": "^1.9.3",
         "@types/node": "^16.11.1",
@@ -56,7 +48,9 @@ npm manifest:
      },
      "scripts": {
         "start": "nodemon --exec ts-node src/index.ts",
-        "start:db": "docker-compose up"
+        "start:db": "docker-compose up",
+        "parser": "yarn add cookie-parser",
+        "parserT":"yarn add -D @types/cookie-parser"
      }
   }
 
@@ -247,6 +241,11 @@ Lockfile:
     integrity sha512-jOdnI/3qTpHABjM5cx1Hc0sKsPoYCp+DP/GJRGtDlPd7fiV9oXGGIcjW/ZOxLIvjGz8MA+uMZI9metHlgqbgwQ==
     dependencies:
       "@types/node" "*"
+  
+  "@types/bcryptjs@^2.4.2":
+    version "2.4.2"
+    resolved "https://registry.yarnpkg.com/@types/bcryptjs/-/bcryptjs-2.4.2.tgz#e3530eac9dd136bfdfb0e43df2c4c5ce1f77dfae"
+    integrity sha512-LiMQ6EOPob/4yUL66SZzu6Yh77cbzJFYll+ZfaPiPPFswtIlA/Fs1MzdKYA7JApHU49zQTbJGX3PDmCpIdDBRQ==
   
   "@types/body-parser@*", "@types/body-parser@1.19.1":
     version "1.19.1"

@@ -2,12 +2,18 @@ import { Redirect, Route, RouteProps, Switch } from 'react-router'
 import { BrowserRouter } from 'react-router-dom'
 import { GlobalStyles } from './component/GlobalStyle'
 import Layout from './component/Layout'
-import { isAuthenticated } from './helper/auth'
+import { Loading } from './component/Loading'
+import { isAuthenticated, usePrepareApp } from './helper/auth'
 import { Home } from './pages/home'
 import { Login } from './pages/Login'
 import { SignUp } from './pages/Signup'
 
 function App() {
+  const { isLoading } = usePrepareApp()
+
+  if (isLoading) {
+    return <Loading />
+  }
   return (
     <BrowserRouter>
       <GlobalStyles />
@@ -15,7 +21,7 @@ function App() {
         <Switch>
           <Route path="/login" component={Login} />
           <Route path="/signup" component={SignUp} />
-          <Route path="/" component={Home} />
+          <AuthRoute path="/" component={Home} />
         </Switch>
       </Layout>
     </BrowserRouter>

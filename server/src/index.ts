@@ -3,7 +3,7 @@ import { createConnection } from "typeorm";
 import express, { Request, Response } from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
-// import cookieParser from 'cookie-parser'
+import cookieParser from 'cookie-parser'
 import { CONST } from './constants/string'
 import { ApolloServer, gql } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
@@ -15,6 +15,7 @@ import { NoteResolver } from "./graphql/NoteResolver";
 
 createConnection().then(async connection => {
     const app = express()
+
     app.use(
         cors({
             origin: 'http://localhost:3000',
@@ -22,7 +23,7 @@ createConnection().then(async connection => {
             credentials: true
         })
     ); 2
-    // app.use(cookieParser())
+    app.use(cookieParser())
     app.use(morgan("dev"))
 
 
@@ -30,7 +31,7 @@ createConnection().then(async connection => {
         res.send("Hello world")
     })
 
-    app.post("/refresh-token", async (req, res) => {
+    app.post("/refresh-token", async (req: Request, res: Response) => {
         const token = req.cookies[CONST.JWT_COOKIE];
         if (!token) return res.send({ success: false, access_token: "" });
 
@@ -67,6 +68,5 @@ createConnection().then(async connection => {
     apolloServer.applyMiddleware({ app, cors: false })
 
     app.listen(CONST.PORT, () => console.log(`server is running on port ${CONST.PORT}/graphql`))
-    console.log("Inserting a new user into the database...")
 
 }).catch(error => console.log(error));

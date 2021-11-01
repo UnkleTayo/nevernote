@@ -5,9 +5,10 @@ import { Wrapper } from '../component/wrapper'
 import { useLoginMutation } from '../generated/graphql'
 import Illustration from '../assets/images/illustartion.jpg'
 import Logo from '../assets/images/never.png'
-import { RouterProps } from 'react-router'
+import { Redirect, RouterProps } from 'react-router'
 import { Link } from 'react-router-dom'
-import { saveToken } from '../helper/auth'
+import { isAuthenticated, saveToken } from '../helper/auth'
+import { useRequired } from '../helper/formHook'
 
 export const Login = ({ history }: RouterProps) => {
   const [form, setForm] = useState({
@@ -15,7 +16,12 @@ export const Login = ({ history }: RouterProps) => {
     password: '',
   })
 
-  const [submitLogin, { error, loading }] = useLoginMutation()
+  const [submitLogin, { error, loading, client }] = useLoginMutation()
+  const { isValid } = useRequired(form)
+
+  if (isAuthenticated()) {
+    return <Redirect to="/" />
+  }
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -25,7 +31,9 @@ export const Login = ({ history }: RouterProps) => {
           ...form,
         },
       })
+      await client.resetStore()
       saveToken(data.data?.login.access_token!)
+
       history.push('/')
     } catch (error) {
       console.error(error)
@@ -62,7 +70,7 @@ export const Login = ({ history }: RouterProps) => {
               <label htmlFor="login-password"></label>
               <input
                 id="login-password"
-                type="text"
+                type="password"
                 name="password"
                 placeholder="Password"
                 value={form.password}
@@ -78,7 +86,7 @@ export const Login = ({ history }: RouterProps) => {
               ))}
 
             <div>
-              <button disabled={loading} type="submit">
+              <button disabled={!isValid || loading} type="submit">
                 {loading ? '...' : 'Submit'}
               </button>
             </div>

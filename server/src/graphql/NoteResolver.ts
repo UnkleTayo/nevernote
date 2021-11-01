@@ -1,10 +1,16 @@
-import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
+import {
+  Arg,
+  Ctx,
+  Mutation,
+  Query,
+  Resolver,
+  UseMiddleware,
+} from "type-graphql";
 import { ILike } from "typeorm";
 import { Note } from "../entity/Note";
 import { User } from "../entity/User";
 import { isAuth } from "../helpers/isAuth";
 import { MyContext } from "./UserResolver";
-
 
 @Resolver()
 export class NoteResolver {
@@ -26,7 +32,7 @@ export class NoteResolver {
       order: {
         created_at: orderBy === "DESC" ? "DESC" : "ASC",
       },
-    })
+    });
   }
 
   @Mutation(() => Note)
@@ -35,23 +41,19 @@ export class NoteResolver {
     @Arg("title") title: string,
     @Arg("content") content: string,
     @Ctx() ctx: MyContext
-
   ) {
     try {
-      const user = await User.findOne(ctx.tokenPayload?.userId)
-      const newNote = new Note()
+      const user = await User.findOne(ctx.tokenPayload?.userId);
+      const newNote = new Note();
       newNote.title = title;
       newNote.content = content;
       newNote.created_by = user!;
       await newNote.save();
-      return newNote
+      return newNote;
     } catch (error: any) {
       throw new Error(error);
-
     }
   }
-
-
 
   @Mutation(() => Note)
   @UseMiddleware(isAuth)
@@ -72,7 +74,6 @@ export class NoteResolver {
       throw new Error(error);
     }
   }
-
 
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)

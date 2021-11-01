@@ -2,6 +2,9 @@ import { Response } from "express";
 import { sign } from "jsonwebtoken";
 import { CONST } from "../constants/string";
 import { User } from "../entity/User";
+
+
+
 export const generateAccessToken = (user: User) => {
   return sign(
     {

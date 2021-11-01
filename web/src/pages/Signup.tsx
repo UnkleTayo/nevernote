@@ -7,6 +7,7 @@ import Illustration from '../assets/images/illustartion.jpg'
 import Logo from '../assets/images/never.png'
 import { RouterProps } from 'react-router'
 import { Link } from 'react-router-dom'
+import { useRequired } from '../helper/formHook'
 
 export const SignUp = ({ history }: RouterProps) => {
   const [form, setForm] = useState({
@@ -15,6 +16,7 @@ export const SignUp = ({ history }: RouterProps) => {
   })
 
   const [submitSignup, { error, loading }] = useSignupMutation()
+  const { isValid } = useRequired(form)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -24,7 +26,6 @@ export const SignUp = ({ history }: RouterProps) => {
           ...form,
         },
       })
-      console.log('FORM', form)
       history.push('/login')
     } catch (error) {
       console.error(error)
@@ -61,7 +62,7 @@ export const SignUp = ({ history }: RouterProps) => {
               <label htmlFor="login-password"></label>
               <input
                 id="login-password"
-                type="text"
+                type="password"
                 name="password"
                 placeholder="Password"
                 value={form.password}
@@ -77,7 +78,7 @@ export const SignUp = ({ history }: RouterProps) => {
               ))}
 
             <div>
-              <button disabled={loading} type="submit">
+              <button disabled={!isValid || loading} type="submit">
                 {loading ? '...' : 'Submit'}
               </button>
             </div>

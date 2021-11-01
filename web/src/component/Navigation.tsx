@@ -1,28 +1,94 @@
 import styled from '@emotion/styled'
-import { FaBook, FaPlus, FaSearch, FaSignOutAlt } from 'react-icons/fa'
 import { GENERICS, MIXINS } from './GlobalStyle'
+import { FaBook, FaPlus, FaSearch, FaSignOutAlt } from 'react-icons/fa'
+import {
+  ListNotesDocument,
+  useAddNoteMutation,
+  useListNotesQuery,
+  useLogoutMutation,
+  useMeQuery,
+} from '../generated/graphql'
+import { useHistory } from 'react-router-dom'
+import { clearToken } from '../helper/auth'
+import { useState } from 'react'
+import { debounceFn } from '../helper/debounce'
+import { useEffect } from 'react'
 
-export const Navigation = () => {
-  // const [submitLogout, { client }] = useLogoutMutation()
+export function Navigation() {
+  const { replace } = useHistory()
+  const [submitLogout, { client }] = useLogoutMutation()
+  const { refetch } = useListNotesQuery()
+  const { data } = useMeQuery()
+  const [submitAddNote] = useAddNoteMutation()
+  const [searchText, setSearchText] = useState<string>('')
+
+  const onLogoutHandler = async () => {
+    try {
+      await submitLogout()
+      await client.resetStore()
+      clearToken()
+      replace('/login')
+    } catch (error) {
+      console.error(error)
+    }
+  }
+  const onAddNoteHandler = async () => {
+    try {
+      const note = await submitAddNote({
+        variables: {
+          title: 'Title',
+          content: 'Content',
+        },
+      })
+      const { listNotes } = client.readQuery({ query: ListNotesDocument })
+      client.writeQuery({
+        query: ListNotesDocument,
+        data: {
+          listNotes: [note.data?.addNote, ...listNotes],
+        },
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const onSearchHandler = debounceFn(async () => {
+    await refetch({ search: searchText }).then(({ data: { listNotes } }) => {
+      client.writeQuery({
+        query: ListNotesDocument,
+        data: {
+          listNotes,
+        },
+      })
+    })
+  }, 1000)
+
+  useEffect(() => {
+    onSearchHandler()
+  }, [searchText, onSearchHandler])
+
   return (
     <NavigationStyled>
       <div className="user-profile">
-        <div></div>
-        <span>John Doe</span>
-        <span>
+        <div>{data?.me?.username.substr(0, 1).toUpperCase()}</div>
+        <span>{data?.me?.username}</span>
+        <span onClick={onLogoutHandler}>
           <FaSignOutAlt />
         </span>
       </div>
       <div className="search-container">
         <FaSearch />
-        <input className="search-box" type="text" placeholder="search" />
+        <input
+          placeholder="Search"
+          value={searchText}
+          onChange={({ target }) => setSearchText(target.value)}
+        />
       </div>
 
-      <div className="newnote-button">
+      <div className="newnote-button" onClick={onAddNoteHandler}>
         <FaPlus />
         <span>New Note</span>
       </div>
-
       <ul className="navs-menu">
         <li>
           <FaBook />
@@ -73,13 +139,13 @@ const NavigationStyled = styled.div`
 
   .search-container {
     ${MIXINS.va()}
-    padding: 10px;
+    padding: 10px 20px;
     border-radius: 30px;
     background-color: ${GENERICS.colorBlackCalm};
     margin: 0 20px;
     margin-bottom: 14px;
 
-    .search-box {
+    > input {
       background-color: transparent;
       color: #ccc;
       border: none;
